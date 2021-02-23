@@ -33,16 +33,15 @@ public class S3StorageController {
     }
 
     @GetMapping(path = "/download")
-    public ResponseEntity<ByteArrayResource> uploadFile(@RequestParam(value = "file") String file) throws IOException {
+    public ResponseEntity<ByteArrayResource> downloadFile(@RequestParam(value = "file") String file) {
         byte[] data = s3Factory.getFile(file);
         ByteArrayResource resource = new ByteArrayResource(data);
 
         return ResponseEntity
                 .ok()
                 .contentLength(data.length)
-                .header("Content-type", "application/octet-stream")
+                .header("Content-type", "text/plain")
                 .header("Content-disposition", "attachment; filename=\"" + file + "\"")
                 .body(resource);
-
     }
 }

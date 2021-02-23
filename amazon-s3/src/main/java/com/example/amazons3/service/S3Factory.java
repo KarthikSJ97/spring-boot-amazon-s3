@@ -1,6 +1,6 @@
 package com.example.amazons3.service;
 
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
@@ -19,7 +19,7 @@ import java.util.List;
 public class S3Factory {
 
     @Autowired
-    AmazonS3Client amazonS3Client;
+    AmazonS3 amazonS3Client;
 
     @Value("${s3.bucket.name}")
     String defaultBucketName;
@@ -31,26 +31,21 @@ public class S3Factory {
         return amazonS3Client.listBuckets();
     }
 
-
-    public void uploadFile(File uploadFile) {
-        amazonS3Client.putObject(defaultBucketName, uploadFile.getName(), uploadFile);
-    }
-
     public void uploadFile(String name,byte[] content)  {
-        File file = new File("/tmp/"+name);
-        file.canWrite();
-        file.canRead();
-        FileOutputStream iofs = null;
+
+//      TODO: Try to avoid storing it in file before uploading it to S3
+        File file = new File("src/main/resources/"+name);
+        FileOutputStream fileOutputStream;
         try {
-            iofs = new FileOutputStream(file);
-            iofs.write(content);
+            fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(content);
             amazonS3Client.putObject(defaultBucketName, defaultBaseFolder+"/"+file.getName(), file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        file.delete();
     }
 
     public byte[] getFile(String key) {
