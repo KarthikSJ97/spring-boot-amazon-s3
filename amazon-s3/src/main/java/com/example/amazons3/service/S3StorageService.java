@@ -66,7 +66,7 @@ public class S3StorageService {
         });
     }
 
-    public void uploadFileWithoutSavingFileOnLocal(MultipartFile file) throws IOException {
+    public void uploadFileWithoutSavingFileOnLocal(MultipartFile file) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
         objectMetadata.setContentLength(file.getSize());
@@ -96,7 +96,7 @@ public class S3StorageService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return new byte[0];
     }
 
     public String getPresignedUrlForObject(String bucketName, String key) {
