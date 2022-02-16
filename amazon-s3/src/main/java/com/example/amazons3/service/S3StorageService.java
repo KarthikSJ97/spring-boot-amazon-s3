@@ -1,10 +1,7 @@
 package com.example.amazons3.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.*;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +34,15 @@ public class S3StorageService {
 
     public List<Bucket> getAllBuckets() {
         return amazonS3Client.listBuckets();
+    }
+
+    public ObjectListing getObjectsInBucket(String bucketName) {
+        try {
+            return amazonS3Client.listObjects(bucketName);
+        } catch (Exception e) {
+            log.error("Specified bucket does not exists");
+            return new ObjectListing();
+        }
     }
 
     public void uploadFile(String name,byte[] content) throws IOException {

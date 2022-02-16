@@ -1,6 +1,7 @@
 package com.example.amazons3.controller;
 
 import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.example.amazons3.service.S3StorageService;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +27,12 @@ public class S3StorageController {
     @GetMapping(path = "/buckets")
     public List<Bucket> listBuckets(){
         return s3StorageService.getAllBuckets();
+    }
+
+    @ApiOperation("An API to get the list of objects in a particular bucket")
+    @GetMapping(path = "/buckets/{bucket-name}/objects")
+    public ObjectListing listObjectsInBucket(@PathVariable("bucket-name") String bucketName) {
+        return s3StorageService.getObjectsInBucket(bucketName);
     }
 
     @ApiOperation("An API to upload file by saving file on local first")
