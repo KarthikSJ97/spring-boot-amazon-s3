@@ -108,4 +108,8 @@ public class S3StorageService {
             return null;
         }
     }
+
+    public boolean checkIfObjectExists(String bucketName, String key) {
+        return amazonS3Client.doesObjectExist(bucketName, key);
+    }
 }

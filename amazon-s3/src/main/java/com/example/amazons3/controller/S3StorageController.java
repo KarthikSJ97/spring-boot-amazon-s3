@@ -64,4 +64,10 @@ public class S3StorageController {
                                     @RequestParam String bucketName) {
         return s3StorageService.getPresignedUrlForObject(bucketName, key);
     }
+
+    @GetMapping(path = "/buckets/exists")
+    public boolean checkIfObjectExists(@RequestParam String key,
+                                      @RequestParam String bucketName) {
+        return s3StorageService.checkIfObjectExists(bucketName, key);
+    }
 }
