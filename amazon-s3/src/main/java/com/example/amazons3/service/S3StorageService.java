@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -92,5 +94,18 @@ public class S3StorageService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String getPresignedUrlForObject(String bucketName, String key) {
+        try {
+            Date expiration = new Date();
+            long expTimeMillis = Instant.now().toEpochMilli();
+            expTimeMillis += 1000 * 60;
+            expiration.setTime(expTimeMillis);
+            return amazonS3Client.generatePresignedUrl(bucketName, key, expiration).toString();
+        } catch (Exception e) {
+            log.error("Something went wrong while generating presigned URL for the requested object");
+            return null;
+        }
     }
 }

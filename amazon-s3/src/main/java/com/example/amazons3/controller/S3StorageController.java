@@ -58,4 +58,10 @@ public class S3StorageController {
                 .header("Content-disposition", "attachment; filename=\"" + file + "\"")
                 .body(resource);
     }
+
+    @GetMapping(path = "/download/presigned-url")
+    public String getPresignedUrlForObject(@RequestParam String key,
+                                    @RequestParam String bucketName) {
+        return s3StorageService.getPresignedUrlForObject(bucketName, key);
+    }
 }
