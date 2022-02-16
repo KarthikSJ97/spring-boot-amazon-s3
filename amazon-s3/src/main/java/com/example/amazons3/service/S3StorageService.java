@@ -20,7 +20,6 @@ import java.nio.file.Files;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -80,7 +79,11 @@ public class S3StorageService {
     }
 
     public ObjectMetadata getObjectMetadata(String key) {
-        return amazonS3Client.getObjectMetadata(defaultBucketName, key);
+        if(checkIfObjectExists(defaultBucketName, key)) {
+            return amazonS3Client.getObjectMetadata(defaultBucketName, key);
+        } else {
+            return new ObjectMetadata();
+        }
     }
 
     public byte[] getFile(String key) {
@@ -102,7 +105,11 @@ public class S3StorageService {
             long expTimeMillis = Instant.now().toEpochMilli();
             expTimeMillis += 1000 * 60;
             expiration.setTime(expTimeMillis);
-            return amazonS3Client.generatePresignedUrl(bucketName, key, expiration).toString();
+            if(checkIfObjectExists(bucketName, key)) {
+                return amazonS3Client.generatePresignedUrl(bucketName, key, expiration).toString();
+            } else {
+                return "Requested object does not exist";
+            }
         } catch (Exception e) {
             log.error("Something went wrong while generating presigned URL for the requested object");
             return null;
