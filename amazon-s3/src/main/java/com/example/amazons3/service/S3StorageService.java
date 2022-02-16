@@ -68,6 +68,7 @@ public class S3StorageService {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
         objectMetadata.setContentLength(file.getSize());
+        objectMetadata.addUserMetadata("fileName", file.getOriginalFilename());
         try {
             amazonS3Client.putObject(defaultBucketName, defaultBaseFolder+"/"+file.getName(), file.getInputStream(), objectMetadata);
         } catch (Exception e) {
