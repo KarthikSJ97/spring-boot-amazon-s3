@@ -2,6 +2,7 @@ package com.example.amazons3.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import lombok.extern.log4j.Log4j2;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @Log4j2
-public class S3Factory {
+public class S3StorageService {
 
     @Autowired
     AmazonS3 amazonS3Client;
@@ -62,6 +64,17 @@ public class S3Factory {
         });
     }
 
+    public void uploadFileWithoutSavingFileOnLocal(MultipartFile file) throws IOException {
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(file.getContentType());
+        objectMetadata.setContentLength(file.getSize());
+        try {
+            amazonS3Client.putObject(defaultBucketName, defaultBaseFolder+"/"+file.getName(), file.getInputStream(), objectMetadata);
+        } catch (Exception e) {
+            log.error("Some error occurred while uploading file to S3...");
+        }
+    }
+
     public byte[] getFile(String key) {
         S3Object obj = amazonS3Client.getObject(defaultBucketName, defaultBaseFolder+"/"+key);
         S3ObjectInputStream stream = obj.getObjectContent();
@@ -74,5 +87,4 @@ public class S3Factory {
         }
         return null;
     }
-
 }

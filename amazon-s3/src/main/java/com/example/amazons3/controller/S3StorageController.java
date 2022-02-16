@@ -1,7 +1,7 @@
 package com.example.amazons3.controller;
 
 import com.amazonaws.services.s3.model.Bucket;
-import com.example.amazons3.service.S3Factory;
+import com.example.amazons3.service.S3StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
@@ -17,24 +17,32 @@ import java.util.Map;
 @RestController
 public class S3StorageController {
     @Autowired
-    S3Factory s3Factory;
+    S3StorageService s3StorageService;
 
     @GetMapping(path = "/buckets")
     public List<Bucket> listBuckets(){
-        return s3Factory.getAllBuckets();
+        return s3StorageService.getAllBuckets();
     }
 
     @PostMapping(path = "/upload",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public Map<String,String> uploadFile(@RequestPart(value = "file", required = false) MultipartFile files) throws IOException {
-        s3Factory.uploadFile(files.getOriginalFilename(),files.getBytes());
+    public Map<String,String> uploadFile(@RequestPart(value = "file") MultipartFile file) throws IOException {
+        s3StorageService.uploadFile(file.getOriginalFilename(),file.getBytes());
         Map<String,String> result = new HashMap<>();
-        result.put("key",files.getOriginalFilename());
+        result.put("key",file.getOriginalFilename());
+        return result;
+    }
+
+    @PostMapping(path = "/upload/without-save",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public Map<String,String> uploadFileWithoutSavingFileOnLocal(@RequestPart(value = "file") MultipartFile file) throws IOException {
+        s3StorageService.uploadFileWithoutSavingFileOnLocal(file);
+        Map<String,String> result = new HashMap<>();
+        result.put("key",file.getOriginalFilename());
         return result;
     }
 
     @GetMapping(path = "/download")
     public ResponseEntity<ByteArrayResource> downloadFile(@RequestParam(value = "file") String file) {
-        byte[] data = s3Factory.getFile(file);
+        byte[] data = s3StorageService.getFile(file);
         ByteArrayResource resource = new ByteArrayResource(data);
 
         return ResponseEntity
