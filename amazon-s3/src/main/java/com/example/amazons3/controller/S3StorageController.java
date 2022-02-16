@@ -1,6 +1,7 @@
 package com.example.amazons3.controller;
 
 import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.example.amazons3.service.S3StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -38,6 +39,11 @@ public class S3StorageController {
         Map<String,String> result = new HashMap<>();
         result.put("key",file.getOriginalFilename());
         return result;
+    }
+
+    @GetMapping(path = "/head-object")
+    public ObjectMetadata getObjectMetadata(@RequestParam String key) {
+        return s3StorageService.getObjectMetadata(key);
     }
 
     @GetMapping(path = "/download")

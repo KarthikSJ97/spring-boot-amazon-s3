@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -74,6 +75,10 @@ public class S3StorageService {
         } catch (Exception e) {
             log.error("Some error occurred while uploading file to S3...");
         }
+    }
+
+    public ObjectMetadata getObjectMetadata(String key) {
+        return amazonS3Client.getObjectMetadata(defaultBucketName, key);
     }
 
     public byte[] getFile(String key) {
