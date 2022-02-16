@@ -45,7 +45,7 @@ public class S3StorageService {
         FileOutputStream fileOutputStream = new FileOutputStream(file);
         try(fileOutputStream) {
             fileOutputStream.write(content);
-            amazonS3Client.putObject(defaultBucketName, defaultBaseFolder+"/"+file.getName(), file);
+            amazonS3Client.putObject(defaultBucketName, defaultBaseFolder+"/"+file.getName()+new Date().toInstant(), file);
         } catch (IOException e) {
             log.error("Some error occurred while uploading file to S3...");
         } finally {
@@ -72,7 +72,7 @@ public class S3StorageService {
         objectMetadata.setContentLength(file.getSize());
         objectMetadata.addUserMetadata("fileName", file.getOriginalFilename());
         try {
-            amazonS3Client.putObject(defaultBucketName, defaultBaseFolder+"/"+file.getName(), file.getInputStream(), objectMetadata);
+            amazonS3Client.putObject(defaultBucketName, defaultBaseFolder+"/"+file.getName()+new Date().toInstant(), file.getInputStream(), objectMetadata);
         } catch (Exception e) {
             log.error("Some error occurred while uploading file to S3...");
         }

@@ -47,7 +47,7 @@ public class S3StorageController {
     }
 
     @ApiOperation("An API to fetch the metadata of an object without actually fetching the object")
-    @GetMapping(path = "/head-object")
+    @GetMapping(path = "/buckets/head-object")
     public ObjectMetadata getObjectMetadata(@RequestParam String key) {
         return s3StorageService.getObjectMetadata(key);
     }
